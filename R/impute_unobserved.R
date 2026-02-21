@@ -5,6 +5,21 @@
 #' @param schedule A data frame containing the schedule of potential outcomes, with one row per unit and one column for each treatment level.
 #' @param tau A numeric value of the Individual Treatment Effect to use to impute for the unobserved potential outcomes.
 #' @return A data frame with the same structure as \code{schedule} but with the unobserved potential outcomes imputed using the specified value of \code{tau}.
+#' @examples
+#' #' data <- data.frame(
+#'  id = 1:6,
+#'  treatment = factor(c("control", "control", "treatment", "treatment", "control", "treatment")),
+#'  response = c(10, 12, 15, 18, 11, 17)
+#' )
+#' schedule <- as_schedule(data, treatment, response)
+#' 
+#' # the fisher sharp null: tau = 0
+#' imputed_schedule_0 <- impute_unobserved(schedule, tau = 0)
+#' print(imputed_schedule_0)
+#' 
+#' # a constant shift effect size of 3
+#' imputed_schedule_3 <- impute_unobserved(schedule, tau = 3)
+#' print(imputed_schedule_3)
 #' @export
 impute_unobserved <- function(schedule, tau) {
   # Check that the schedule is a data frame of class schedule
