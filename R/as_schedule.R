@@ -7,6 +7,14 @@
 #' @param outcome_prefix A character string to prefix the names of the columns containing the potential outcomes.
 #' 
 #' @return A data frame with the schedule of potential outcomes appended as new columns.
+#' @examples
+#' data <- data.frame(
+#'  id = 1:6,
+#'  treatment = factor(c("control", "control", "treatment", "treatment", "control", "treatment")),
+#'  response = c(10, 12, 15, 18, 11, 17)
+#' )
+#' schedule <- as_schedule(data, treatment, response)
+#' print(schedule)
 #' @export
 as_schedule <- function(data, treatment, response, append = TRUE, outcome_prefix = "Y") {
   treatment_nm <- rlang::as_name(rlang::enquo(treatment))

@@ -23,3 +23,12 @@ A data frame with the schedule of potential outcomes appended as new columns.
 \description{
 Convert data frame to a schedule of potential outcomes
 }
+\examples{
+data <- data.frame(
+ id = 1:6,
+ treatment = factor(c("control", "control", "treatment", "treatment", "control", "treatment")),
+ response = c(10, 12, 15, 18, 11, 17)
+)
+schedule <- as_schedule(data, treatment, response)
+print(schedule)
+}
