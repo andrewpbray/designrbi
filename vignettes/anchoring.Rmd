@@ -21,7 +21,8 @@ library(designrbi)
 ### Load data
 
 ```{r message = FALSE}
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
 anchor <- read_csv("https://stat158.berkeley.edu/spring-2026/data/anchoring/anchoring.csv") |>
   mutate(d = factor(X),
          y = Y) |>
