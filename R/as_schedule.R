@@ -29,6 +29,11 @@ as_schedule <- function(data, treatment, response, append = TRUE, outcome_prefix
   if (!is.factor(data[[treatment_nm]])) {
     stop("The treatment column must be a factor.")
   }
+
+  # Add a temporary row identifier to ensure uniqueness
+  data <- data |>
+    dplyr::mutate(.row_id = dplyr::row_number())
+  on.exit(data <- dplyr::select(data, -dplyr::any_of(".row_id")), add = TRUE)
   
   # Create the schedule of potential outcomes
   schedule <- tidyr::pivot_wider(data, 

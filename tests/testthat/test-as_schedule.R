@@ -35,3 +35,13 @@ test_that("errors are thrown for missing columns", {
   expect_error(as_schedule(data, nonexistent_treatment, response))
   expect_error(as_schedule(data, treatment, nonexistent_response))
 })
+
+test_that("no errors are thrown if there are duplicate rows in the data frame", {
+  data <- data.frame(
+    id = c(1, 1, 2, 2, 3, 3),
+    treatment = factor(c("control", "control", "treatment", "treatment", "control", "treatment")),
+    response = c(10, 10, 15, 15, 11, 17)
+  )
+
+  expect_silent(as_schedule(data, treatment, response))
+})
