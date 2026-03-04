@@ -41,18 +41,20 @@ as_schedule <- function(data, treatment, response, append = TRUE, outcome_prefix
     ) |>
     dplyr::select(-.internal_row_id) # remove the temporary row id
   
+  if (append) {
+    out <- dplyr::bind_cols(data, schedule)
+  } else {
+    out <- dplyr::select(schedule, -dplyr::any_of(colnames(data)))
+  }
+
   # Add "schedule" class
-  class(schedule) <- c("schedule", class(schedule))
+  class(out) <- c("schedule", class(schedule))
 
   # Store attributes
-  attr(schedule, "treatment") <- treatment_nm
-  attr(schedule, "response")  <- response_nm
-  attr(schedule, "treatment_levels") <- levels(data[[treatment_nm]])
-  attr(schedule, "potential_outcome_cols") <- paste0(outcome_prefix, levels(data[[treatment_nm]]))
+  attr(out, "treatment") <- treatment_nm
+  attr(out, "response")  <- response_nm
+  attr(out, "treatment_levels") <- levels(data[[treatment_nm]])
+  attr(out, "potential_outcome_cols") <- paste0(outcome_prefix, levels(data[[treatment_nm]]))
 
-  if (append) {
-    return(dplyr::bind_cols(data, schedule))
-  } else {
-    dplyr::select(schedule, -dplyr::any_of(colnames(data)))
-  }
+  return(out)
 }
