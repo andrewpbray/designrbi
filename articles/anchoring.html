@@ -306,7 +306,10 @@ line<a class="anchor" aria-label="anchor" href="#plot-distribution-of-estimates-
 <h3 id="calculate-confidence-interval">Calculate confidence interval<a class="anchor" aria-label="anchor" href="#calculate-confidence-interval"></a>
 </h3>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">sim5000_estimates</span><span class="op">$</span><span class="va">ate_hat</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.025</span>, <span class="fl">0.975</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">ci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">sim5000_estimates</span><span class="op">$</span><span class="va">ate_hat</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.025</span>, <span class="fl">0.975</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">ci</span></span>
+<span><span class="co">#&gt;      2.5%     97.5% </span></span>
+<span><span class="co">#&gt;  6.786939 24.218931</span></span></code></pre></div>
 </div>
   </div>
 
