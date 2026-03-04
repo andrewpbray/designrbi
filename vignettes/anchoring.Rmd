@@ -95,4 +95,5 @@ ggplot(sim5000_estimates, aes(x = ate_hat)) +
 
 ```{r}
 ci <- quantile(sim5000_estimates$ate_hat, probs = c(0.025, 0.975))
+ci
 ```
