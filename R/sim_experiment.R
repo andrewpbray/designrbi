@@ -22,9 +22,9 @@
 #' )
 #' schedule <- as_schedule(data, treatment, response)
 #' imputed  <- impute_unobserved(schedule, tau = 0)
-#' sim_exp(imputed, reps = 5)
+#' sim_experiment(imputed, reps = 5)
 #' @export
-sim_exp <- function(schedule, reps = 1) {
+sim_experiment <- function(schedule, reps = 1) {
   if (!inherits(schedule, "schedule")) {
     stop("'schedule' must be an object of class 'schedule'.")
   }

@@ -2,3 +2,4 @@
 
 export(as_schedule)
 export(impute_unobserved)
+export(sim_experiment)

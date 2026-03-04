@@ -1,0 +1,97 @@
+---
+title: "Anchoring Experiment"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{anchoring}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(designrbi)
+```
+
+### Load data
+
+```{r message = FALSE}
+library(tidyverse)
+anchor <- read_csv("https://stat158.berkeley.edu/spring-2026/data/anchoring/anchoring.csv") |>
+  mutate(d = factor(X),
+         y = Y) |>
+  select(d, y)
+```
+
+### Calculate estimate
+```{r}
+diff_in_means <- function(y, x) {
+  groups <- split(y, x)
+  ybar0 <- mean(groups[[1]])
+  ybar1 <- mean(groups[[2]])
+  ybar1 - ybar0
+}
+
+ate_hat <- diff_in_means(anchor$y, anchor$d)
+ate_hat
+```
+
+### Make a schedule and impute unobserved potential outcomes
+```{r}
+schedule <- anchor |>
+  as_schedule(treatment = d, response = y)
+schedule
+```
+
+
+```{r}
+imputed_schedule <- impute_unobserved(schedule, tau = ate_hat)
+imputed_schedule
+```
+
+### Simulate a single experiment
+```{r}
+sim1 <- imputed_schedule |>
+  sim_experiment(reps = 1)
+sim1
+anchor
+```
+
+### Simulate 5000 experiments then calcalate 5000 estimates
+
+```{r}
+sim5000 <- imputed_schedule |>
+  sim_experiment(reps = 5000)
+head(sim5000)
+tail(sim5000)
+```
+
+
+```{r}
+sim5000_estimates <- sim5000 |>
+  group_by(replicate) |>
+  summarize(ate_hat = diff_in_means(y, d))
+sim5000_estimates
+```
+
+### Plot distribution of estimates with observed estimate as a vertical line
+```{r}
+ggplot(sim5000_estimates, aes(x = ate_hat)) +
+  geom_histogram(binwidth = 0.5, color = "black") +
+  geom_vline(xintercept = ate_hat, color = "red", linetype = "dashed") +
+  labs(title = "Distribution of Estimates from Simulated Experiments",
+       x = "Estimated ATE",
+       y = "Frequency") +
+  theme_bw()
+```
+
+### Calculate confidence interval
+
+```{r}
+ci <- quantile(sim5000_estimates$ate_hat, probs = c(0.025, 0.975))
+```
