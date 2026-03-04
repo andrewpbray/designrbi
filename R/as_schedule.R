@@ -29,22 +29,17 @@ as_schedule <- function(data, treatment, response, append = TRUE, outcome_prefix
   if (!is.factor(data[[treatment_nm]])) {
     stop("The treatment column must be a factor.")
   }
-
-  # Add a temporary row identifier to preserve original row order across pivot_wider()
-  data <- data |>
-    dplyr::mutate(.internal_row_id = dplyr::row_number())
   
   # Create the schedule of potential outcomes
-  schedule <- tidyr::pivot_wider(
-    data, 
-    names_from = {{ treatment }}, 
-    values_from = {{ response }}, 
-    names_prefix = outcome_prefix,
-    names_sort = TRUE
-  )
-
-  # Remove temporary internal row identifier from the resulting schedule
-  schedule <- dplyr::select(schedule, -dplyr::any_of(".internal_row_id"))
+  schedule <- data |>
+    dplyr::mutate(.internal_row_id = dplyr::row_number()) |> # add a temporary row id
+    tidyr::pivot_wider(
+      names_from = {{ treatment }}, 
+      values_from = {{ response }}, 
+      names_prefix = outcome_prefix,
+      names_sort = TRUE
+    ) |>
+    dplyr::select(-.internal_row_id) # remove the temporary row id
   
   # Add "schedule" class
   class(schedule) <- c("schedule", class(schedule))
@@ -56,7 +51,7 @@ as_schedule <- function(data, treatment, response, append = TRUE, outcome_prefix
   attr(schedule, "potential_outcome_cols") <- paste0(outcome_prefix, levels(data[[treatment_nm]]))
 
   if (append) {
-    return(schedule)
+    return(dplyr::bind_cols(data, schedule))
   } else {
     dplyr::select(schedule, -dplyr::any_of(colnames(data)))
   }
