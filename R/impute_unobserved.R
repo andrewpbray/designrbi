@@ -27,6 +27,9 @@ impute_unobserved <- function(schedule, tau) {
     stop("The schedule must be a data frame of class 'schedule'.")
   }
 
+  # Capture attributes before mutation (dplyr::mutate drops custom attrs)
+  attrs_orig <- attributes(schedule)
+
   # Get the names of the potential outcome columns from the schedule
   potential_outcome_cols <- attr(schedule, "potential_outcome_cols")
 
@@ -53,6 +56,13 @@ impute_unobserved <- function(schedule, tau) {
       "{col1}" := dplyr::coalesce(.data[[col1]], .data[[col0]] + tau)
     )
   }
+
+  # Restore custom attributes and class lost by dplyr::mutate()
+  custom_attrs <- setdiff(names(attrs_orig), c("names", "row.names", "class"))
+  for (nm in custom_attrs) {
+    attr(schedule, nm) <- attrs_orig[[nm]]
+  }
+  class(schedule) <- c("schedule", class(schedule)[class(schedule) != "schedule"])
 
   schedule
 }  

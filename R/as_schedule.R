@@ -55,6 +55,7 @@ as_schedule <- function(data, treatment, response, append = TRUE, outcome_prefix
   attr(out, "response")  <- response_nm
   attr(out, "treatment_levels") <- levels(data[[treatment_nm]])
   attr(out, "potential_outcome_cols") <- paste0(outcome_prefix, levels(data[[treatment_nm]]))
+  attr(out, "treatment_counts") <- table(data[[treatment_nm]])
 
   return(out)
 }
