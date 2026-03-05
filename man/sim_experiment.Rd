@@ -4,7 +4,7 @@
 \alias{sim_experiment}
 \title{Simulate a randomized experiment}
 \usage{
-sim_experiment(schedule, reps = 1)
+sim_experiment(schedule, reps = 1, response_name = NULL)
 }
 \arguments{
 \item{schedule}{A data frame of class \code{schedule} with no missing
@@ -13,12 +13,17 @@ potential outcomes, as returned by \code{impute_unobserved()}.}
 \item{reps}{A positive integer giving the number of simulations to run.
 Results from each simulation are stacked row-wise and identified by the
 \code{replicate} column. Defaults to \code{1}.}
+
+\item{response_name}{A character string giving the name of the response
+column in the output. For schedules created with
+\code{experiment_to_schedule()}, this defaults to the original response
+column name. For schedules created with \code{as_schedule()} (wide format),
+there is no original response column name, so this defaults to \code{"Y"}.}
 }
 \value{
-A data frame with the same columns as the original input to
-\code{as_schedule()} (i.e. the treatment and response columns), plus a
-\code{replicate} integer column indicating which simulation each row
-belongs to.
+A data frame with the treatment column, the response column (named
+according to \code{response_name}), and a \code{replicate} integer column
+indicating which simulation each row belongs to.
 }
 \description{
 Recreates the process of randomly assigning each unit to a treatment group
@@ -30,7 +35,7 @@ data <- data.frame(
   treatment = factor(c("control", "control", "treatment", "treatment", "control", "treatment")),
   response  = c(10, 12, 15, 18, 11, 17)
 )
-schedule <- as_schedule(data, treatment, response)
+schedule <- experiment_to_schedule(data, treatment, response)
 imputed  <- impute_unobserved(schedule, tau = 0)
 sim_experiment(imputed, reps = 5)
 }

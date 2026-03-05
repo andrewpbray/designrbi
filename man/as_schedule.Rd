@@ -2,33 +2,43 @@
 % Please edit documentation in R/as_schedule.R
 \name{as_schedule}
 \alias{as_schedule}
-\title{Convert data frame to a schedule of potential outcomes}
+\title{Coerce a wide data frame to a schedule of potential outcomes}
 \usage{
-as_schedule(data, treatment, response, append = TRUE, outcome_prefix = "Y")
+as_schedule(data, treatment, potential_outcomes)
 }
 \arguments{
-\item{data}{A data frame of data from a randomized experiment.}
+\item{data}{A data frame structured as a schedule of potential outcomes, with
+one column per treatment level.}
 
-\item{treatment}{Name of the column in \code{data} that contains the treatment assignments, a factor.}
+\item{treatment}{The unquoted name of the column in \code{data} that contains
+the treatment assignments, which must be a factor.}
 
-\item{response}{Name of the column in \code{data} that contains the response variable.}
-
-\item{append}{A logical value indicating whether to append the schedule of potential outcomes to the original data frame.}
-
-\item{outcome_prefix}{A character string to prefix the names of the columns containing the potential outcomes.}
+\item{potential_outcomes}{A tidyselect expression selecting the columns that
+contain the potential outcomes, one per treatment level (e.g.,
+\code{c(Ycontrol, Ytreatment)} or \code{starts_with("Y")}).}
 }
 \value{
-A data frame with the schedule of potential outcomes appended as new columns.
+A data frame with class \code{"schedule"} and metadata attributes:
+\code{treatment}, \code{treatment_levels}, \code{treatment_counts}, and
+\code{potential_outcome_cols}.
 }
 \description{
-Convert data frame to a schedule of potential outcomes
+Attaches the \code{"schedule"} class and metadata attributes to a data frame
+that is already structured as a schedule of potential outcomes — i.e., one
+column per treatment level containing the potential outcomes for each unit.
+To convert long-format experimental data instead, see
+\code{\link{experiment_to_schedule}}.
 }
 \examples{
-data <- data.frame(
- id = 1:6,
- treatment = factor(c("control", "control", "treatment", "treatment", "control", "treatment")),
- response = c(10, 12, 15, 18, 11, 17)
+sched <- data.frame(
+  id = 1:6,
+  treatment = factor(c("control", "control", "treatment",
+                       "treatment", "control", "treatment")),
+  Ycontrol   = c(10, 12, 15, 18, 11, 17),
+  Ytreatment = c(11, 13, 16, 19, 10, 17)
 )
-schedule <- as_schedule(data, treatment, response)
-print(schedule)
+as_schedule(sched, treatment, c(Ycontrol, Ytreatment))
+}
+\seealso{
+\code{\link{experiment_to_schedule}}
 }

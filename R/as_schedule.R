@@ -1,61 +1,63 @@
-#' Convert data frame to a schedule of potential outcomes
-#' 
-#' @param data A data frame of data from a randomized experiment.
-#' @param treatment Name of the column in \code{data} that contains the treatment assignments, a factor.
-#' @param response Name of the column in \code{data} that contains the response variable.
-#' @param append A logical value indicating whether to append the schedule of potential outcomes to the original data frame. 
-#' @param outcome_prefix A character string to prefix the names of the columns containing the potential outcomes.
-#' 
-#' @return A data frame with the schedule of potential outcomes appended as new columns.
+#' Coerce a wide data frame to a schedule of potential outcomes
+#'
+#' Attaches the \code{"schedule"} class and metadata attributes to a data frame
+#' that is already structured as a schedule of potential outcomes — i.e., one
+#' column per treatment level containing the potential outcomes for each unit.
+#' To convert long-format experimental data instead, see
+#' \code{\link{experiment_to_schedule}}.
+#'
+#' @param data A data frame structured as a schedule of potential outcomes, with
+#'   one column per treatment level.
+#' @param treatment The unquoted name of the column in \code{data} that contains
+#'   the treatment assignments, which must be a factor.
+#' @param potential_outcomes A tidyselect expression selecting the columns that
+#'   contain the potential outcomes, one per treatment level (e.g.,
+#'   \code{c(Ycontrol, Ytreatment)} or \code{starts_with("Y")}).
+#'
+#' @return A data frame with class \code{"schedule"} and metadata attributes:
+#'   \code{treatment}, \code{treatment_levels}, \code{treatment_counts}, and
+#'   \code{potential_outcome_cols}.
+#'
+#' @seealso \code{\link{experiment_to_schedule}}
+#'
 #' @examples
-#' data <- data.frame(
-#'  id = 1:6,
-#'  treatment = factor(c("control", "control", "treatment", "treatment", "control", "treatment")),
-#'  response = c(10, 12, 15, 18, 11, 17)
+#' sched <- data.frame(
+#'   id = 1:6,
+#'   treatment = factor(c("control", "control", "treatment",
+#'                        "treatment", "control", "treatment")),
+#'   Ycontrol   = c(10, 12, 15, 18, 11, 17),
+#'   Ytreatment = c(11, 13, 16, 19, 10, 17)
 #' )
-#' schedule <- as_schedule(data, treatment, response)
-#' print(schedule)
+#' as_schedule(sched, treatment, c(Ycontrol, Ytreatment))
 #' @export
-as_schedule <- function(data, treatment, response, append = TRUE, outcome_prefix = "Y") {
+as_schedule <- function(data, treatment, potential_outcomes) {
   treatment_nm <- rlang::as_name(rlang::enquo(treatment))
-  response_nm  <- rlang::as_name(rlang::enquo(response))
+  potential_outcome_cols <- names(
+    tidyselect::eval_select(rlang::enquo(potential_outcomes), data)
+  )
 
-  # Check that the specified columns exist in the data frame
-  if (!all(c(treatment_nm, response_nm) %in% colnames(data))) {
-    stop("The specified columns do not all exist in the data frame.")
+  if (!treatment_nm %in% colnames(data)) {
+    stop("The specified treatment column does not exist in the data frame.")
   }
-
-  # Check that the treatment column is a factor
   if (!is.factor(data[[treatment_nm]])) {
     stop("The treatment column must be a factor.")
   }
-  
-  # Create the schedule of potential outcomes
-  schedule <- data |>
-    dplyr::mutate(.internal_row_id = dplyr::row_number()) |> # add a temporary row id
-    tidyr::pivot_wider(
-      names_from = {{ treatment }}, 
-      values_from = {{ response }}, 
-      names_prefix = outcome_prefix,
-      names_sort = TRUE
-    ) |>
-    dplyr::select(-.internal_row_id) # remove the temporary row id
-  
-  if (append) {
-    out <- dplyr::bind_cols(data, schedule)
-  } else {
-    out <- dplyr::select(schedule, -dplyr::any_of(colnames(data)))
+  if (length(potential_outcome_cols) < 2) {
+    stop(
+      "At least two potential outcome columns must be selected. ",
+      "To convert long-format experimental data, use `experiment_to_schedule()`."
+    )
   }
 
-  # Add "schedule" class
-  class(out) <- c("schedule", class(schedule))
+  treatment_levels <- levels(data[[treatment_nm]])
+  treatment_counts <- table(data[[treatment_nm]])
 
-  # Store attributes
-  attr(out, "treatment") <- treatment_nm
-  attr(out, "response")  <- response_nm
-  attr(out, "treatment_levels") <- levels(data[[treatment_nm]])
-  attr(out, "potential_outcome_cols") <- paste0(outcome_prefix, levels(data[[treatment_nm]]))
-  attr(out, "treatment_counts") <- table(data[[treatment_nm]])
+  out <- data
+  class(out) <- c("schedule", class(out))
+  attr(out, "treatment")              <- treatment_nm
+  attr(out, "treatment_levels")       <- treatment_levels
+  attr(out, "treatment_counts")       <- treatment_counts
+  attr(out, "potential_outcome_cols") <- potential_outcome_cols
 
-  return(out)
+  out
 }

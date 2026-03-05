@@ -1,0 +1,8 @@
+url: https://github.com/andrewpbray/designrbi
+
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    right: [search, github]
