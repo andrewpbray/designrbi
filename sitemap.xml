@@ -1,13 +1,15 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
-<url><loc>/404.html</loc></url>
-<url><loc>/LICENSE.html</loc></url>
-<url><loc>/articles/anchoring.html</loc></url>
-<url><loc>/articles/index.html</loc></url>
-<url><loc>/authors.html</loc></url>
-<url><loc>/index.html</loc></url>
-<url><loc>/reference/as_schedule.html</loc></url>
-<url><loc>/reference/impute_unobserved.html</loc></url>
-<url><loc>/reference/index.html</loc></url>
-<url><loc>/reference/sim_experiment.html</loc></url>
+<url><loc>https://github.com/andrewpbray/designrbi/404.html</loc></url>
+<url><loc>https://github.com/andrewpbray/designrbi/LICENSE.html</loc></url>
+<url><loc>https://github.com/andrewpbray/designrbi/articles/confidence_intervals.html</loc></url>
+<url><loc>https://github.com/andrewpbray/designrbi/articles/index.html</loc></url>
+<url><loc>https://github.com/andrewpbray/designrbi/articles/simulate_from_schedule.html</loc></url>
+<url><loc>https://github.com/andrewpbray/designrbi/authors.html</loc></url>
+<url><loc>https://github.com/andrewpbray/designrbi/index.html</loc></url>
+<url><loc>https://github.com/andrewpbray/designrbi/reference/as_schedule.html</loc></url>
+<url><loc>https://github.com/andrewpbray/designrbi/reference/experiment_to_schedule.html</loc></url>
+<url><loc>https://github.com/andrewpbray/designrbi/reference/impute_unobserved.html</loc></url>
+<url><loc>https://github.com/andrewpbray/designrbi/reference/index.html</loc></url>
+<url><loc>https://github.com/andrewpbray/designrbi/reference/sim_experiment.html</loc></url>
 </urlset>
 
